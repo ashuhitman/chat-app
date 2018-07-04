@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
+const {generateMessage} = require('./utils/message');
 
 const publicPath = path.join(__dirname,'../public');
 const port = process.env.PORT || 3000;
@@ -17,6 +18,15 @@ io.on('connection', (socket) => {
        console.log('client disconnected');
        
    });
+  
+
+   socket.on('createMsg',(message) => {
+       
+       socket.broadcast.emit('newMessage',generateMessage(message.from, message.text));
+   });
+   socket.emit('newMessage',generateMessage('Admin','Welcome to chat App'));
+   socket.broadcast.emit('newMessage',generateMessage('Admin', 'New user joined'));
+
 });
 
 //static middleware
